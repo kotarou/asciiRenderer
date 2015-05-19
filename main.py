@@ -6,6 +6,7 @@ import argparse
 import matplotlib.pyplot as plt
 import Image,ImageDraw,ImageFont
 import random
+import unicodedata
 parser = argparse.ArgumentParser()
 parser.add_argument("fileName", help="display a square of a given number", type=str)
 parser.add_argument("res", help="display a square of a given number", type=int)
@@ -44,17 +45,76 @@ print("new shape", sob.shape)
 # ie, .shape gives (y,x)
 print("width",x, " height", y)
 
-plt.imshow(sob, cmap='Greys_r')
-plt.show()
+# plt.imshow(sob, cmap='Greys_r')
+# plt.show()
 
 xs = (x/res)+1
 ys = (y/res)+1
 
-out = np.chararray((ys, xs))
+out = np.chararray((ys, xs), unicode=True)
 print("shape of output ", out.shape)
 
 
-render 	= ['#','|','-','','/','\\']
+render 	= ['#','|','-','','/','\\', u"\u2610",'(',
+')',
+'{',
+'}',
+'[',
+']',
+'1',
+'2',
+'3',
+'4',
+'5',
+'6',
+'7',
+'8',
+'9',
+'0',
+'q',
+'w',
+'e',
+'r',
+'t',
+'y',
+'u',
+'i',
+'o',
+'p',
+'a',
+'s',
+'d',
+'f',
+'g',
+'h',
+'j',
+'k',
+'l',
+';',
+"'",
+'z',
+'x',
+'c',
+'v',
+'b',
+'n',
+'m',
+',',
+'.',
+'/',
+'`',
+'"',
+'!',
+'@',
+'#',
+'$',
+'%',
+'^',
+'&',
+'*',
+'+',
+'=',
+'_',]
 comp 	= []
 
 
@@ -64,20 +124,17 @@ for target in render:
 	canvas = Image.new('L', (res, res), "black")
 	draw = ImageDraw.Draw(canvas)
 	# This is using <x,y> in contrast to everything else
-	draw.text((1,-8), target, font = font, fill = "white")
+	draw.text((1,-res/2), target, font = font, fill = "white")
 	comp.append(canvas)
-	plt.imshow(canvas, cmap='Greys_r')
-	plt.show()
-
-print("COMP", comp)
-
+	#plt.imshow(canvas, cmap='Greys_r')
+	#plt.show()
 
 def compare(arr):
-	"""Takes an input array and returns the ascii character that best rperesents it"""
+	"""Takes an input array and returns the ascii character that best represents it"""
 	mseMax = 999999999
 	use = ''
 	for i in range(0,len(render)):
-		print(type(comp[i]))
+		#print(type(comp[i]))
 		err = np.sum((comp[i] - arr) ** 2)
 		if err < mseMax:
 			mseMax = err
@@ -102,7 +159,7 @@ draw = ImageDraw.Draw(canvas2)
 for j in range(0,ys):
 	for i in range(0,xs):
 		#print(i,j)
-		a = str(out[j, i])
+		a = unicode(out[j, i])
 		# This is using <x,y> in contrast to everything else
 		draw.text((i*res+10,j*res+5), a, font = font, fill = "#000000")
 
