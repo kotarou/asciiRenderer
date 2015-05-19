@@ -69,7 +69,7 @@ comp 	= []
 font = ImageFont.truetype("OpenSans-Regular.ttf", int(res*1.2))
 
 # How about I make this a one off for each time I choose a new resolution?
-if os.path.isdir('textRenders_'+res):
+if os.path.isdir('textRenders_'+str(res)):
 	print("Images exist")
 	# load images into comp
 else:
