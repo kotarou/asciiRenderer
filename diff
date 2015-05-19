@@ -7,8 +7,8 @@ import matplotlib.pyplot as plt
 import Image,ImageDraw,ImageFont
 import random
 import unicodedata
-import os
 
+import cairo
 
 parser = argparse.ArgumentParser()
 parser.add_argument("fileName", help="display a square of a given number", type=str)
@@ -59,30 +59,46 @@ print("shape of output ", out.shape)
 
 
 render 	= ['#','|','-','','/','\\', u"\u2610",'(',
-')','{','}','[',']','1','2','3','4','5','6','7',
-'8','9','0','q','w','e','r','t','y','u','i','o',
-'p','a','s','d','f','g','h','j','k','l',';',"'",'z','x','c','v','b','n','m',',',
-'.','/','`','"','!','@','#','$','%','^','&','*','+','=','_',]
+')','{','}','[',']','1','2','3','4','5','6','7','8','9','0','q',
+'w','e','r','t','y','u','i','o','p','a','s','d','f','g','h','j',
+'k','l',';',"'",'z','x','c','v','b','n','m',',','.','/','`','"',
+'!','@','#','$','%','^','&','*','+','=','_',]
 comp 	= []
 
 
 font = ImageFont.truetype("OpenSans-Regular.ttf", int(res*1.2))
 
-# How about I make this a one off for each time I choose a new resolution?
-if os.path.isdir('textRenders_'+res):
-	print("Images exist")
-	# load images into comp
-else:
-	print("Images do not exist")
-	# implment behaviour here
-
 for target in render:
-	canvas = Image.new('L', (res, res), "black")
+
+
+		# data = np.zeros((12, 12, 4), dtype=np.uint8)
+	# surface = cairo.ImageSurface.create_for_data(data, cairo.FORMAT_ARGB32, 12, 12)
+	# ctx = cairo.Context(surface)
+	# ctx.set_source_rgb(0, 0, 0)
+	# ctx.rectangle(0, 0, 12, 12)
+	# ctx.fill()
+	# ctx.select_font_face("OpenSans-Regular.ttf")
+	# ctx.set_font_size(12)
+	# ctx.move_to(4,9)
+	# ctx.set_source_rgb(1, 1, 1)
+	# ctx.show_text(target)
+
+	# comp.append(data[:,:,0])
+	# plt.imshow(data[:,:,0], cmap='Greys_r')
+	# plt.show()
+
+	y1, x1 = font.getsize(target)
+	#print(x1,y1)
+	canvas = Image.new('L', (int(x1/1.5), y1), "black")
 	draw = ImageDraw.Draw(canvas)
 	# This is using <x,y> in contrast to everything else
-	draw.text((1,-res/2), target, font = font, fill = "white")
-	comp.append(canvas)
+	draw.text((0, -int((res)/2)), target, font = font, fill = "white")
 	# plt.imshow(canvas, cmap='Greys_r')
+	# plt.show()
+
+	img_resized = canvas.resize((res,res), Image.ANTIALIAS)
+	comp.append(img_resized)
+	# plt.imshow(img_resized, cmap='Greys_r')
 	# plt.show()
 
 def compare(arr):
@@ -90,19 +106,12 @@ def compare(arr):
 	mseMax = 999999999
 	use = ''
 	for i in range(0,len(render)):
-		#print(type(comp[i]))
 		err = np.sum((comp[i] - arr) ** 2)
 		if err < mseMax:
 			mseMax = err
 			use = render[i]
 	return use
 
-	#return render[random.randint(0,1)]
-
-	# if np.average(array) > avg:
-	# 	return "0"
-	# else:
-	# 	return "1"
 
 
 for j in xrange(0,y,res):
@@ -114,12 +123,9 @@ canvas2 = Image.new('RGB', (x+100, y+100), (255, 255, 255))
 draw = ImageDraw.Draw(canvas2)
 for j in range(0,ys):
 	for i in range(0,xs):
-		#print(i,j)
 		a = unicode(out[j, i])
 		# This is using <x,y> in contrast to everything else
 		draw.text((i*res+10,j*res+5), a, font = font, fill = "#000000")
 
 plt.imshow(canvas2)
 plt.show()
-#plt.imshow(sob)
-#plt.show()
