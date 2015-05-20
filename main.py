@@ -63,27 +63,43 @@ render 	= ['#','|','-','','/','\\', u"\u2610",'(',
 '8','9','0','q','w','e','r','t','y','u','i','o',
 'p','a','s','d','f','g','h','j','k','l',';',"'",'z','x','c','v','b','n','m',',',
 '.','/','`','"','!','@','#','$','%','^','&','*','+','=','_',]
+# render = ['#','|','/','\\','-', ' ']
 comp 	= []
 
 
-font = ImageFont.truetype("OpenSans-Regular.ttf", int(res*1.2))
+font = ImageFont.truetype("OpenSans-Regular.ttf", int(res*92/76))
 
 # How about I make this a one off for each time I choose a new resolution?
-if os.path.isdir('textRenders_'+str(res)):
-	print("Images exist")
-	# load images into comp
-else:
-	print("Images do not exist")
-	# implment behaviour here
+# folderDir = 'textRenders_'+str(res)
+# if not os.path.exists(folderDir):
+# 	print("Image folder does not exist")
+# 	os.makedirs(folderDir)
+
+# 	for target in render:
+# 		canvas = Image.new('L', (res, res), "black")
+# 		draw = ImageDraw.Draw(canvas)
+# 		# This is using <x,y> in contrast to everything else
+# 		draw.text((1,-res/2), target, font = font, fill = "white")
+# 		#canvas.save(folderDir + "/" + target + '.bmp')
+# 		comp.append(canvas)
+# 		# plt.imshow(canvas, cmap='Greys_r')
+# 		# plt.show()
 
 for target in render:
 	canvas = Image.new('L', (res, res), "black")
 	draw = ImageDraw.Draw(canvas)
 	# This is using <x,y> in contrast to everything else
-	draw.text((1,-res/2), target, font = font, fill = "white")
+	draw.text((res/4,-res/3), target, font = font, fill = "white")
+	#canvas.save(folderDir + "/" + target + '.bmp')
 	comp.append(canvas)
 	# plt.imshow(canvas, cmap='Greys_r')
 	# plt.show()
+
+# else:
+# 	print("Image folder exists")
+
+
+
 
 def compare(arr):
 	"""Takes an input array and returns the ascii character that best represents it"""
