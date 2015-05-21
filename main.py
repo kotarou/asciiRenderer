@@ -13,10 +13,12 @@ import os
 parser = argparse.ArgumentParser()
 parser.add_argument("fileName", help="display a square of a given number", type=str)
 parser.add_argument("res", help="display a square of a given number", type=int)
+parser.add_argument("version", help="display a square of a given number", type=int)
 args = parser.parse_args()
 
 image = sp.misc.imread(args.fileName,flatten=True) #WHY DOES THIS WORK!!??
 res = args.res
+version = args.version
 #image = misc.lena()
 
 sx = ndimage.filters.sobel(image, axis=0)
@@ -43,13 +45,6 @@ else:
 print(dy, dx)
 sob = np.pad(sob,((0,dy),(0,dx)),'constant', constant_values=(0))
 print("new shape", sob.shape)
-#sob[sob == ''] = 0
-# Remember that these are going to be opposite
-# ie, .shape gives (y,x)
-print("width",x, " height", y)
-
-# plt.imshow(sob, cmap='Greys_r')
-# plt.show()
 
 xs = (x/res)+1
 ys = (y/res)+1
@@ -65,7 +60,7 @@ render 	= ['#','|','-','','/','\\', u"\u2610",'(',
 '.','/','`','"','!','@','#','$','%','^','&','*','+','=','_',]
 # render = ['#','|','/','\\','-', ' ']
 comp 	= []
-
+comp2 = []
 
 font = ImageFont.truetype("OpenSans-Regular.ttf", int(res*92/76))
 
@@ -87,11 +82,24 @@ font = ImageFont.truetype("OpenSans-Regular.ttf", int(res*92/76))
 
 for target in render:
 	canvas = Image.new('L', (res, res), "black")
+
 	draw = ImageDraw.Draw(canvas)
 	# This is using <x,y> in contrast to everything else
 	draw.text((res/4,-res/3), target, font = font, fill = "white")
 	#canvas.save(folderDir + "/" + target + '.bmp')
-	comp.append(canvas)
+	
+	if version == 1:
+		comp.append(canvas)
+	else:
+		arr2 = np.array(canvas)
+		i = result = 0
+		for item in arr2:
+			for entry in item:
+				result += (i* entry / 255.)
+				i += 1
+		#print(result)
+		comp2.append(result)
+
 	# plt.imshow(canvas, cmap='Greys_r')
 	# plt.show()
 
@@ -105,21 +113,29 @@ def compare(arr):
 	"""Takes an input array and returns the ascii character that best represents it"""
 	mseMax = 999999999
 	use = ''
+
+	i = arr2 = 0
+
+	if version != 1:
+		for item in arr:
+			for entry in item:
+				arr2 += (i* entry / 255.)
+				i += 1
+
 	for i in range(0,len(render)):
 		#print(type(comp[i]))
-		err = np.sum((comp[i] - arr) ** 2)
+		if version == 1:
+			err = np.sum((comp[i] - arr) ** 2)
+		else:
+			err = np.abs(comp2[i] - arr2)
+
+		#print(err)
+
 		if err < mseMax:
 			mseMax = err
 			use = render[i]
+	#print(use)
 	return use
-
-	#return render[random.randint(0,1)]
-
-	# if np.average(array) > avg:
-	# 	return "0"
-	# else:
-	# 	return "1"
-
 
 for j in xrange(0,y,res):
 	for i in xrange(0,x,res):
