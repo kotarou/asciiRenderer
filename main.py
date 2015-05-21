@@ -9,7 +9,8 @@ import random
 import unicodedata
 import os
 
-
+import time
+t0 = time.time()
 parser = argparse.ArgumentParser()
 parser.add_argument("fileName", help="display a square of a given number", type=str)
 parser.add_argument("res", help="display a square of a given number", type=int)
@@ -92,13 +93,15 @@ for target in render:
 		comp.append(canvas)
 	else:
 		arr2 = np.array(canvas)
-		i = result = 0
+		i = 1
+		result = 0
 		for item in arr2:
 			for entry in item:
 				result += (i* entry / 255.)
 				i += 1
 		#print(result)
 		comp2.append(result)
+
 
 	# plt.imshow(canvas, cmap='Greys_r')
 	# plt.show()
@@ -114,7 +117,8 @@ def compare(arr):
 	mseMax = 999999999
 	use = ''
 
-	i = arr2 = 0
+	i = 1
+	arr2 = err = err2 = 0
 
 	if version != 1:
 		for item in arr:
@@ -125,9 +129,10 @@ def compare(arr):
 	for i in range(0,len(render)):
 		#print(type(comp[i]))
 		if version == 1:
-			err = np.sum((comp[i] - arr) ** 2)
+			err = np.linalg.norm(comp[i] - arr)
 		else:
 			err = np.abs(comp2[i] - arr2)
+
 
 		#print(err)
 
@@ -150,7 +155,10 @@ for j in range(0,ys):
 		a = unicode(out[j, i])
 		# This is using <x,y> in contrast to everything else
 		draw.text((i*res+10,j*res+5), a, font = font, fill = "#000000")
+t1 = time.time()
 
+total = t1-t0
+print("time taken ",total)
 plt.imshow(canvas2)
 plt.show()
 #plt.imshow(sob)
